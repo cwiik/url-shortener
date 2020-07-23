@@ -1,209 +1,167 @@
-import Head from 'next/head'
+import React, { createRef, useEffect, useState } from 'react';
+import Head from 'next/head';
 
-export default function Home() {
-  return (
-    <div className="container">
-      <Head>
-        <title>Create Next App</title>
-        <link rel="icon" href="/favicon.ico" />
-      </Head>
+// * NPM libraries
+import Grid from '@material-ui/core/Grid';
+import styled from 'styled-components';
+import { debounce } from 'lodash';
+import { CopyToClipboard } from 'react-copy-to-clipboard';
+import Axios from 'axios';
 
-      <main>
-        <h1 className="title">
-          Welcome to <a href="https://nextjs.org">Next.js!</a>
-        </h1>
+// * Components
+import Animation from '../components/Animation';
+import { GenerateShortUrl } from '../components/GenerateShortUrl';
 
-        <p className="description">
-          Get started by editing <code>pages/index.js</code>
-        </p>
+const Bg = styled(Grid)`
+    && {
+        min-height: 100vh;
+        background-color: ${(props) => props.theme.colors.blue};
+    }
+`;
 
-        <div className="grid">
-          <a href="https://nextjs.org/docs" className="card">
-            <h3>Documentation &rarr;</h3>
-            <p>Find in-depth information about Next.js features and API.</p>
-          </a>
+const TextHighlight = styled.span`
+    && {
+        color: ${(props) => props.theme.colors.yellow};
+    }
+`;
 
-          <a href="https://nextjs.org/learn" className="card">
-            <h3>Learn &rarr;</h3>
-            <p>Learn about Next.js in an interactive course with quizzes!</p>
-          </a>
+const Title = styled.h1`
+    && {
+        font-size: 64px;
+        font-weight: 700;
+        letter-spacing: 0.5rem;
+        color: ${(props) => props.theme.colors.white};
+        text-align: center;
 
-          <a
-            href="https://github.com/vercel/next.js/tree/master/examples"
-            className="card"
-          >
-            <h3>Examples &rarr;</h3>
-            <p>Discover and deploy boilerplate example Next.js projects.</p>
-          </a>
+        @media screen and (max-width: 600px) {
+            font-size: 36px;
+        }
+    }
+`;
 
-          <a
-            href="https://vercel.com/import?filter=next.js&utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-            className="card"
-          >
-            <h3>Deploy &rarr;</h3>
-            <p>
-              Instantly deploy your Next.js site to a public URL with Vercel.
-            </p>
-          </a>
-        </div>
-      </main>
+const URL = styled.h2`
+    && {
+        font-size: 48px;
+        font-weight: 700;
+        color: ${(props) => props.theme.colors.white};
+        text-align: center;
+        cursor: pointer;
 
-      <footer>
-        <a
-          href="https://vercel.com?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Powered by{' '}
-          <img src="/vercel.svg" alt="Vercel Logo" className="logo" />
-        </a>
-      </footer>
+        @media screen and (max-width: 600px) {
+            font-size: 24px;
+        }
+    }
+`;
 
-      <style jsx>{`
-        .container {
-          min-height: 100vh;
-          padding: 0 0.5rem;
-          display: flex;
-          flex-direction: column;
-          justify-content: center;
-          align-items: center;
+const Input = styled.input`
+    && {
+        margin-top: 50px;
+        font-size: 24px;
+        text-indent: 10px;
+        text-align: center;
+        color: ${(props) => props.theme.colors.white};
+        background-color: rgba(0, 0, 0, 0.2);
+        border: 2px solid rgba(0, 0, 0, 0.4);
+        border-radius: 12px;
+        width: 100%;
+        height: 60px;
+        &:hover {
+            border: 2px solid #fca311;
+        }
+        &:focus {
+            border: 2px solid #fca311;
+        }
+        &:placeholder {
+            color: ${(props) => props.theme.colors.grey};
         }
 
-        main {
-          padding: 5rem 0;
-          flex: 1;
-          display: flex;
-          flex-direction: column;
-          justify-content: center;
-          align-items: center;
+        @media screen and (max-width: 600px) {
+            font-size: 16px;
         }
+    }
+`;
 
-        footer {
-          width: 100%;
-          height: 100px;
-          border-top: 1px solid #eaeaea;
-          display: flex;
-          justify-content: center;
-          align-items: center;
+const Main = () => {
+    const inputref = createRef();
+    const [url, setUrl] = useState('');
+    const [shortUrl, setShortUrl] = useState('');
+    const [errorMessage, setErrorMessage] = useState('');
+
+    useEffect(() => {
+        addDB();
+    }, [shortUrl]);
+
+    useEffect(() => {
+        inputref.current.focus();
+    }, []);
+
+    const addDB = async () => {
+        if (shortUrl !== '') {
+            const res = await Axios.post('/api/addDB', {
+                url: shortUrl,
+            });
+            res.data.error && setErrorMessage(red.data.error);
         }
+    };
 
-        footer img {
-          margin-left: 0.5rem;
-        }
+    const HandleChange = debounce((url) => {
+        url && GetShortUrl(url);
+    }, 1000);
 
-        footer a {
-          display: flex;
-          justify-content: center;
-          align-items: center;
-        }
+    const GetShortUrl = async (url) => {
+        setErrorMessage('');
+        setShortUrl(GenerateShortUrl(url));
+        setUrl('');
+    };
 
-        a {
-          color: inherit;
-          text-decoration: none;
-        }
+    return (
+        <>
+            <Head>
+                <link rel='canonical' href='' />
+                <meta name='viewport' content='initial-scale=1.0, width=device-width' />
+                <title>URL SHORTENER | EVERYONE LOVES SHORT URLS</title>
+                <meta name='description' content='Make your URLs short and clean with us.' />
+                <meta name='keywords' content='url, shortener, shrink'></meta>
+                <meta name='robots' content='index, follow' />
+                <meta property='og:locale' content='en_EN' />
+                <meta property='og:site_name' content='EVERYONE LOVES SHORT URLS' />
+                <meta property='og:title' content='URL SHORTENER | EVERYONE LOVES SHORT URLS' />
+                <meta property='og:description' content='Make your URLs short and clean with us.' />
+                <meta property='og:url' content='' />
+                <meta property='og:image' content='' />
+            </Head>
+            <Bg container direction='column' justify='center' alignItems='center'>
+                <Grid xs={10} container item direction='row' justify='center' alignItems='center'>
+                    <Grid item xs={12} md={10} lg={7} xl={6}>
+                        <Title>
+                            EVERYONE LOVES SHORT <TextHighlight>URL</TextHighlight>S
+                        </Title>
+                    </Grid>
 
-        .title a {
-          color: #0070f3;
-          text-decoration: none;
-        }
+                    <Grid item xs={12}>
+                        <Grid container item justify='center' alignItems='center'>
+                            <Animation />
+                        </Grid>
+                    </Grid>
+                    <Grid item xs={12} md={8} lg={4}>
+                        <form onSubmit={() => alert('test')}>
+                            <Input
+                                type='text'
+                                onChange={(e) => HandleChange(e.target.value)}
+                                ref={inputref}
+                                placeholder='LONG URL here and we do rest ❤️'
+                            />
+                        </form>
+                    </Grid>
+                    <Grid item xs={12}>
+                        <CopyToClipboard text={shortUrl}>
+                            <URL>{!errorMessage ? shortUrl : errorMessage}</URL>
+                        </CopyToClipboard>
+                    </Grid>
+                </Grid>
+            </Bg>
+        </>
+    );
+};
 
-        .title a:hover,
-        .title a:focus,
-        .title a:active {
-          text-decoration: underline;
-        }
-
-        .title {
-          margin: 0;
-          line-height: 1.15;
-          font-size: 4rem;
-        }
-
-        .title,
-        .description {
-          text-align: center;
-        }
-
-        .description {
-          line-height: 1.5;
-          font-size: 1.5rem;
-        }
-
-        code {
-          background: #fafafa;
-          border-radius: 5px;
-          padding: 0.75rem;
-          font-size: 1.1rem;
-          font-family: Menlo, Monaco, Lucida Console, Liberation Mono,
-            DejaVu Sans Mono, Bitstream Vera Sans Mono, Courier New, monospace;
-        }
-
-        .grid {
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          flex-wrap: wrap;
-
-          max-width: 800px;
-          margin-top: 3rem;
-        }
-
-        .card {
-          margin: 1rem;
-          flex-basis: 45%;
-          padding: 1.5rem;
-          text-align: left;
-          color: inherit;
-          text-decoration: none;
-          border: 1px solid #eaeaea;
-          border-radius: 10px;
-          transition: color 0.15s ease, border-color 0.15s ease;
-        }
-
-        .card:hover,
-        .card:focus,
-        .card:active {
-          color: #0070f3;
-          border-color: #0070f3;
-        }
-
-        .card h3 {
-          margin: 0 0 1rem 0;
-          font-size: 1.5rem;
-        }
-
-        .card p {
-          margin: 0;
-          font-size: 1.25rem;
-          line-height: 1.5;
-        }
-
-        .logo {
-          height: 1em;
-        }
-
-        @media (max-width: 600px) {
-          .grid {
-            width: 100%;
-            flex-direction: column;
-          }
-        }
-      `}</style>
-
-      <style jsx global>{`
-        html,
-        body {
-          padding: 0;
-          margin: 0;
-          font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto,
-            Oxygen, Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue,
-            sans-serif;
-        }
-
-        * {
-          box-sizing: border-box;
-        }
-      `}</style>
-    </div>
-  )
-}
+export default Main;

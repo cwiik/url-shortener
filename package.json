@@ -1,6 +1,6 @@
 {
-  "name": "short-it-out",
-  "version": "0.1.0",
+  "name": "url-shortener",
+  "version": "1.0.0",
   "private": true,
   "scripts": {
     "dev": "next dev",
@@ -8,8 +8,17 @@
     "start": "next start"
   },
   "dependencies": {
+    "@material-ui/core": "^4.11.0",
+    "@material-ui/styles": "^4.10.0",
+    "aws-sdk": "^2.718.0",
+    "axios": "^0.19.2",
+    "lodash": "^4.17.19",
+    "nanoid": "^3.1.10",
     "next": "9.4.4",
     "react": "16.13.1",
-    "react-dom": "16.13.1"
+    "react-copy-to-clipboard": "^5.0.2",
+    "react-dom": "16.13.1",
+    "react-lottie": "^1.2.3",
+    "styled-components": "^5.1.1"
   }
 }
