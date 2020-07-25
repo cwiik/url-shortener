@@ -155,7 +155,6 @@ const Main = () => {
                         </form>
                     </Grid>
                     <Grid item xs={12}>
-                        {alert(router.route)}
                         <CopyToClipboard text={`http://www.localhost:3000/${shortUrl}`}>
                             <URL>
                                 {!errorMessage && shortUrl ? (
