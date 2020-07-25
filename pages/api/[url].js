@@ -1,5 +1,4 @@
 const AWS = require('aws-sdk');
-const { v4: uuidv4 } = require('uuid');
 
 const AWS_SETTINGS = {
     region: process.env.AWS_DEFAULT_REGION,
@@ -14,18 +13,21 @@ module.exports = async (req, res) => {
 
         const params = {
             TableName: 'urlshortener',
-            Item: {
-                id: uuidv4(),
-                shorturl: req.body.shorturl,
-                longurl: req.body.longurl,
+            FilterExpression: 'shorturl = :shorturl',
+            ExpressionAttributeValues: {
+                ':shorturl': req.query.url,
             },
         };
 
-        docClient.put(params, function (err, data) {
+        docClient.scan(params, function (err, data) {
             if (err) {
                 return reject(res.json({ error: 'Sorry but something went wrong 😞' }));
             } else {
-                return resolve(res.status(200).send('ok'));
+                if (data.Items[0] !== undefined) {
+                    return resolve(res.status(200).send(data.Items[0].longurl));
+                } else {
+                    return reject(res.json({ error: 'Sorry but something went wrong 😞' }));
+                }
             }
         });
     });

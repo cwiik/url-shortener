@@ -1,5 +1,7 @@
 import React, { createRef, useEffect, useState } from 'react';
 import Head from 'next/head';
+import Link from 'next/link';
+import { useRouter } from 'next/router';
 
 // * NPM libraries
 import Grid from '@material-ui/core/Grid';
@@ -82,6 +84,7 @@ const Input = styled.input`
 `;
 
 const Main = () => {
+    const router = useRouter();
     const inputref = createRef();
     const [url, setUrl] = useState('');
     const [shortUrl, setShortUrl] = useState('');
@@ -98,21 +101,19 @@ const Main = () => {
     const addDB = async () => {
         if (shortUrl !== '') {
             const res = await Axios.post('/api/addDB', {
-                url: shortUrl,
+                shorturl: shortUrl,
+                longurl: url,
             });
-            res.data.error && setErrorMessage(red.data.error);
+            res.data.error && setErrorMessage(res.data.error);
         }
-    };
-
-    const HandleChange = debounce((url) => {
-        url && GetShortUrl(url);
-    }, 1000);
-
-    const GetShortUrl = async (url) => {
-        setErrorMessage('');
-        setShortUrl(GenerateShortUrl(url));
         setUrl('');
     };
+
+    const HandleChange = debounce((inputurl) => {
+        setUrl(inputurl.replace('http://', '').replace('https://', '').replace('www.', ''));
+        setErrorMessage('');
+        setShortUrl(GenerateShortUrl());
+    }, 1000);
 
     return (
         <>
@@ -149,13 +150,22 @@ const Main = () => {
                                 type='text'
                                 onChange={(e) => HandleChange(e.target.value)}
                                 ref={inputref}
-                                placeholder='LONG URL here and we do rest ❤️'
+                                placeholder='LONG URL here and we do the rest ❤️'
                             />
                         </form>
                     </Grid>
                     <Grid item xs={12}>
-                        <CopyToClipboard text={shortUrl}>
-                            <URL>{!errorMessage ? shortUrl : errorMessage}</URL>
+                        {alert(router.route)}
+                        <CopyToClipboard text={`http://www.localhost:3000/${shortUrl}`}>
+                            <URL>
+                                {!errorMessage && shortUrl ? (
+                                    <Link href={`/${shortUrl}`}>
+                                        <a>{`https://url-shortener-three.vercel.app/${shortUrl}`}</a>
+                                    </Link>
+                                ) : (
+                                    errorMessage
+                                )}
+                            </URL>
                         </CopyToClipboard>
                     </Grid>
                 </Grid>

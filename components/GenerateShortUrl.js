@@ -1,6 +1,6 @@
 import { nanoid } from 'nanoid';
 
-export const GenerateShortUrl = (URL) => {
+export const GenerateShortUrl = () => {
     const SHORTURL = nanoid(10);
-    return `http://s.url/${SHORTURL}`;
+    return SHORTURL;
 };
