@@ -145,7 +145,7 @@ const Main = () => {
                         </Grid>
                     </Grid>
                     <Grid item xs={12} md={8} lg={4}>
-                        <form onSubmit={() => alert('test')}>
+                        <form>
                             <Input
                                 type='text'
                                 onChange={(e) => HandleChange(e.target.value)}
@@ -159,7 +159,9 @@ const Main = () => {
                             <URL>
                                 {!errorMessage && shortUrl ? (
                                     <Link href={`/${shortUrl}`}>
-                                        <a>{`https://url-shortener-three.vercel.app/${shortUrl}`}</a>
+                                        <a
+                                            style={{ color: '#fff' }}
+                                        >{`https://url-shortener-three.vercel.app/${shortUrl}`}</a>
                                     </Link>
                                 ) : (
                                     errorMessage

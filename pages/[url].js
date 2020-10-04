@@ -6,7 +6,7 @@ const RedirectToUrl = (props) => {
     return;
 };
 RedirectToUrl.getInitialProps = async ({ req, res, query }) => {
-    const res2 = await Axios.get(`http://localhost:3000/api/${query.url}`);
+    const res2 = await Axios.get(`https://url-shortener-three.vercel.app/api/${query.url}`);
     if (res2.data.error) {
         res.writeHead(301, {
             Location: `/`,
