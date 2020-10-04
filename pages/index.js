@@ -160,6 +160,7 @@ const Main = () => {
                                 {!errorMessage && shortUrl ? (
                                     <Link href={`/${shortUrl}`}>
                                         <a
+                                            target='_blank'
                                             style={{ color: '#fff' }}
                                         >{`https://url-shortener-three.vercel.app/${shortUrl}`}</a>
                                     </Link>
