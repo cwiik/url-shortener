@@ -155,7 +155,7 @@ const Main = () => {
                         </form>
                     </Grid>
                     <Grid item xs={12}>
-                        <CopyToClipboard text={`http://www.localhost:3000/${shortUrl}`}>
+                        <CopyToClipboard text={`https://url-shortener-three.vercel.app/${shortUrl}`}>
                             <URL>
                                 {!errorMessage && shortUrl ? (
                                     <Link href={`/${shortUrl}`}>
